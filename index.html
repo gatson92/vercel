@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>이상현 콘서트 초대장</title>
+  <style>
+    @keyframes galaxy {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes sparkle {
+      0% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.3); }
+      100% { opacity: 0.5; transform: scale(1); }
+    }
+
+    @keyframes unfold {
+      0% { transform: scaleY(0); opacity: 0; }
+      100% { transform: scaleY(1); opacity: 1; }
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: black;
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3f/Milky_Way_Galaxy.jpg');
+      background-size: cover;
+      background-position: center;
+      animation: galaxy 80s linear infinite;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: sparkle 2s infinite ease-in-out;
+    }
+
+    .envelope-wrapper {
+      position: relative;
+      width: 360px;
+      height: 260px;
+      cursor: pointer;
+      perspective: 1000px;
+      z-index: 2;
+      touch-action: manipulation;
+    }
+
+    .envelope {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #fafafa 0%, #e0e0e0 100%);
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    .envelope::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: #dcdcdc;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      z-index: 3;
+    }
+
+    .ribbon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 60px;
+      background: transparent;
+      z-index: 4;
+      transition: all 0.8s ease;
+      pointer-events: none;
+    }
+
+    .ribbon::before, .ribbon::after {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 60px;
+      background: crimson;
+      border-radius: 50% 50% 0 0;
+      transform: rotate(45deg);
+      transform-origin: bottom right;
+      box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.4);
+    }
+
+    .ribbon::after {
+      left: 50px;
+      transform: rotate(-45deg);
+      transform-origin: bottom left;
+    }
+
+	.letter {
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  transform: scaleY(0);
+	  width: 315px;
+	  background: white;
+	  border-radius: 12px;
+	  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+	  opacity: 0;
+	  padding: 24px;
+	  text-align: center;
+	  z-index: 5;
+	  transform-origin: top;
+	  transition: all 0.8s ease;
+	}
+
+
+	.letter.show {
+	  transform: translate(-50%, -50%) scaleY(1);
+	  opacity: 1;
+	  animation: unfold 0.8s ease forwards;
+	}
+
+
+    .letter h2 {
+      margin-top: 0;
+      font-size: 0.85em;
+      color: #444;
+    }
+
+    .letter p {
+      font-size: 0.9em;
+      color: #666;
+      line-height: 1.6em;
+    }
+
+    .envelope-wrapper.opened .ribbon {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+
+    @media (max-width: 400px) {
+      .envelope-wrapper {
+        transform: scale(0.85);
+      }
+    }
+  </style>
+</head>
+<body ontouchstart="">
+  <div class="stars" id="stars"></div>
+
+  <div class="envelope-wrapper" id="wrapper" role="button" tabindex="0">
+    <div class="envelope"></div>
+    <div class="ribbon"></div>
+    <div class="letter">
+      <h2>이상현 콘서트에 당신을 초대합니다</h2>
+      <p><strong>🗓 오늘 오후 7시</strong><br />
+      📍 서울 은하수 홀 (구름타는길 7번 출구)</p>
+      <p>별빛처럼 반짝이는 밤,<br />
+      이상현의 감미로운 음악과 함께<br />
+      잊지 못할 순간을 선물합니다.<br />
+      <em>정장은 선택, 감동은 필수!</em></p>
+      <button onclick="alert('참석이 확인되었습니다!')">참석할게요 🎟</button>
+    </div>
+  </div>
+
+  <audio id="bgm" src="https://www.bensound.com/bensound-music/bensound-sweet.mp3" loop autoplay muted></audio>
+
+  <script>
+    document.addEventListener("touchstart", () => {
+      const audio = document.getElementById("bgm");
+      audio.muted = false;
+      audio.play().catch(() => {});
+    }, { once: true });
+
+    const wrapper = document.getElementById("wrapper");
+    const letter = wrapper.querySelector(".letter");
+
+    // 모바일 대응 - pointerdown 사용
+    wrapper.addEventListener("pointerdown", function () {
+      if (!wrapper.classList.contains("opened")) {
+        wrapper.classList.add("opened");
+        setTimeout(() => {
+          letter.classList.add("show");
+        }, 500);
+      }
+    });
+
+    // 별 추가
+    const starContainer = document.getElementById("stars");
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.left = Math.random() * 100 + "%";
+      star.style.animationDuration = (1.5 + Math.random() * 3) + "s";
+      starContainer.appendChild(star);
+    }
+  </script>
+</body>
+</html>

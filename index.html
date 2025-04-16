@@ -217,11 +217,31 @@
       z-index: 1000;
     }
 	
+	.calendar-share {
+      position: fixed;
+      bottom: 20px;
+      left: 80%;
+      transform: translateX(-50%);
+      background: gray;
+      color: #3c1e1e;
+      border: none;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+	
   </style>
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 </head>
 <body ontouchstart="">
   <div class="stars" id="stars"></div>
+
+<a class="calendar-link" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z" target="_blank"></a>
+
 
   <div class="envelope-wrapper" id="wrapper" role="button" tabindex="0">
     <div class="envelope"></div>
@@ -235,7 +255,10 @@
       잊지 못할 순간을 선물합니다.<br />
       <em>정장은 선택, 감동은 필수!</em></p>
       <button onclick="confirmAttendance()">참석할게요 🎟</button>
-	  <button class="kakao-share" onclick="shareKakao()">🔗</button>
+	  
+<button class="calendar-share" onclick="window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z', '_blank')">📆</button>
+
+<button class="kakao-share" onclick="shareKakao()">🔗</button>
     </div>
   </div>
 
@@ -319,6 +342,8 @@
         ]
       });
     }
+	
+	
   </script>
 </body>
 </html>

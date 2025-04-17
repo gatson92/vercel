@@ -25,12 +25,18 @@
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-
-    @keyframes sparkle {
-      0% { opacity: 0.5; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.3); }
-      100% { opacity: 0.5; transform: scale(1); }
-    }
+	
+	@keyframes sparkle {
+	  0%, 100% {
+		opacity: 0.2;
+		transform: scale(1) translateY(0);
+	  }
+	  50% {
+		opacity: 1;
+		transform: scale(1.5) translateY(-2px);
+	  }
+	}
+	
 
     @keyframes unfold {
       0% { transform: scaleY(0); opacity: 0; }
@@ -53,6 +59,31 @@
       position: relative;
       touch-action: manipulation;
     }
+	
+	.star {
+	  position: absolute;
+	  width: 2px;
+	  height: 2px;
+	  background: white;
+	  border-radius: 50%;
+	  animation: sparkle 3s infinite ease-in-out, star-float 30s linear infinite;
+	  filter: drop-shadow(0 0 2px white);
+	}
+
+	.star.large {
+	  width: 8px;
+	  height: 8px;
+	  opacity: 1;
+	  animation: sparkle 4s infinite ease-in-out, star-float 40s linear infinite;
+	}
+
+	.star.dim {
+	  width: 1px;
+	  height: 1px;
+	  opacity: 0.3;
+	  animation: sparkle 6s infinite ease-in-out, star-float 50s linear infinite;
+	  filter: drop-shadow(0 0 4px white);
+	}	
 
     .stars {
       position: absolute;
@@ -61,15 +92,11 @@
       pointer-events: none;
       z-index: 0;
     }
+	
+	.star.dim { animation-duration: 60s; }
+	.star { animation-duration: 40s; }
+	.star.large { animation-duration: 20s; }
 
-    .star {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: white;
-      border-radius: 50%;
-      animation: sparkle 2s infinite ease-in-out;
-    }
 
     .envelope-wrapper {
       position: relative;
@@ -234,10 +261,46 @@
       z-index: 1000;
     }
 	
+	.meteor {
+    position: fixed;
+    width: 2px;
+    height: 150px;
+    background: linear-gradient(white, rgba(255,255,255,0.1)); /* 꼬리 → 위쪽 */
+    z-index: 1;
+    opacity: 0.7;
+    transform: rotate(45deg) scale(-1); /* 방향: 오른쪽 위 → 왼쪽 아래 */
+    animation: fall 1.2s linear forwards;
+    pointer-events: none;
+  }
+  
+  @keyframes fall {
+    from {
+      transform: translate(0, 0) rotate(45deg) scale(-1);
+      opacity: 1;
+    }
+    to {
+      transform: translate(-300px, 300px) rotate(45deg) scale(-1); /* 왼쪽 아래로 낙하 */
+      opacity: 0;
+    }
+  }
+  
+#constellation {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+
+	
   </style>
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 </head>
 <body ontouchstart="">
+<canvas id="constellation"></canvas>
+
   <div class="stars" id="stars"></div>
 
 <a class="calendar-link" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z" target="_blank"></a>
@@ -343,7 +406,39 @@
       });
     }
 	
+	// 유성떨어지는 로직
+	setInterval(() => {
+    const meteor = document.createElement('div');
+    meteor.className = 'meteor';
+    meteor.style.left = Math.random() * window.innerWidth + 'px';
+    meteor.style.top = Math.random() * window.innerHeight * 0.5 + 'px'; // 위에서 시작
+    document.body.appendChild(meteor);
+    setTimeout(() => meteor.remove(), 6000); // 6초 후 제거
+	}, 500); // 0.5초마다 유성 생성
 	
+	
+	for (let i = 0; i < 100; i++) {
+	  const star = document.createElement('div');
+	  star.className = 'star';
+
+	  // 확률적으로 다른 스타일 적용
+	  const rand = Math.random();
+	  if (rand < 0.2) star.classList.add('large');     // 20%는 밝고 큼
+	  else if (rand < 0.4) star.classList.add('dim');  // 20%는 어둡고 작음
+
+	  star.style.left = Math.random() * 100 + 'vw';
+	  star.style.top = Math.random() * -100 + 'vh';
+	  star.style.animationDelay = Math.random() * 5 + 's';
+	  document.getElementById('stars').appendChild(star);
+	}
+	
+	// 별 반짝
+	const hues = [0, 45, 60, 180, 220]; // 빨, 노, 따뜻한 흰, 파랑 계열
+	const hue = hues[Math.floor(Math.random() * hues.length)];
+	star.style.backgroundColor = `hsl(${hue}, 100%, 85%)`;
+
+
+
   </script>
 </body>
 </html>

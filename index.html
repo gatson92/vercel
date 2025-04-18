@@ -1,444 +1,550 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>이상현 콘서트 초대장</title>
-  <style>
-	@keyframes explode {
-      0% { transform: scale(0.3) translateY(0); opacity: 1; }
-      30% { transform: scale(1.5) translateY(-60px) rotate(180deg); opacity: 1; }
-      100% { transform: scale(0.2) translateY(100px) rotate(720deg); opacity: 0; }
-    }
-
-    .confetti {
-      position: fixed;
-      border-radius: 50%;
-      z-index: 999;
-      animation: explode 2.5s ease-out forwards;
-      pointer-events: none;
-      mix-blend-mode: screen;
-    }
-	
-    @keyframes galaxy {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-	
-	@keyframes sparkle {
-	  0%, 100% {
-		opacity: 0.2;
-		transform: scale(1) translateY(0);
-	  }
-	  50% {
-		opacity: 1;
-		transform: scale(1.5) translateY(-2px);
-	  }
-	}
-	
-
-    @keyframes unfold {
-      0% { transform: scaleY(0); opacity: 0; }
-      100% { transform: scaleY(1); opacity: 1; }
-    }
-
-    body {
-      margin: 0;
-      height: 100vh;
-      background-color: black;
-      background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3f/Milky_Way_Galaxy.jpg');
-      background-size: cover;
-      background-position: center;
-      animation: galaxy 80s linear infinite;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', sans-serif;
-      position: relative;
-      touch-action: manipulation;
-    }
-	
-	.star {
-	  position: absolute;
-	  width: 2px;
-	  height: 2px;
-	  background: white;
-	  border-radius: 50%;
-	  animation: sparkle 3s infinite ease-in-out, star-float 30s linear infinite;
-	  filter: drop-shadow(0 0 2px white);
-	}
-
-	.star.large {
-	  width: 8px;
-	  height: 8px;
-	  opacity: 1;
-	  animation: sparkle 4s infinite ease-in-out, star-float 40s linear infinite;
-	}
-
-	.star.dim {
-	  width: 1px;
-	  height: 1px;
-	  opacity: 0.3;
-	  animation: sparkle 6s infinite ease-in-out, star-float 50s linear infinite;
-	  filter: drop-shadow(0 0 4px white);
-	}	
-
-    .stars {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-	
-	.star.dim { animation-duration: 60s; }
-	.star { animation-duration: 40s; }
-	.star.large { animation-duration: 20s; }
-
-
-    .envelope-wrapper {
-      position: relative;
-      width: 360px;
-      height: 260px;
-      cursor: pointer;
-      perspective: 1000px;
-      z-index: 2;
-      touch-action: manipulation;
-    }
-
-    .envelope {
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #fafafa 0%, #e0e0e0 100%);
-      border: 2px solid #ccc;
-      border-radius: 12px;
-      position: relative;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
-    }
-
-    .envelope::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 50%;
-      background: #dcdcdc;
-      clip-path: polygon(0 0, 100% 0, 50% 100%);
-      z-index: 3;
-    }
-
-    .ribbon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100px;
-      height: 60px;
-      background: transparent;
-      z-index: 4;
-      transition: all 0.8s ease;
-      pointer-events: none;
-    }
-
-    .ribbon::before, .ribbon::after {
-      content: '';
-      position: absolute;
-      width: 50px;
-      height: 60px;
-      background: crimson;
-      border-radius: 50% 50% 0 0;
-      transform: rotate(45deg);
-      transform-origin: bottom right;
-      box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.4);
-    }
-
-    .ribbon::after {
-      left: 50px;
-      transform: rotate(-45deg);
-      transform-origin: bottom left;
-    }
-
-	.letter {
-	  position: absolute;
-	  top: 0;
-	  left: 0;
-	  transform: scaleY(0);
-	  width: 315px;
-	  background: white;
-	  border-radius: 12px;
-	  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-	  opacity: 0;
-	  padding: 24px;
-	  text-align: center;
-	  z-index: 5;
-	  transform-origin: top;
-	  transition: all 0.8s ease;
-	}
-
-
-	.letter.show {
-	  transform: translate(-50%, -50%) scaleY(1);
-	  opacity: 1;
-	  animation: unfold 0.8s ease forwards;
-	}
-
-
-    .letter h2 {
-      margin-top: 0;
-      font-size: 0.85em;
-      color: #444;
-    }
-
-    .letter p {
-      font-size: 0.9em;
-      color: #666;
-      line-height: 1.6em;
-    }
-
-    .envelope-wrapper.opened .ribbon {
-      transform: scaleX(0);
-      opacity: 0;
-    }
-
-    @media (max-width: 400px) {
-      .envelope-wrapper {
-        transform: scale(0.85);
-      }
-    }
-	
-	.main-button {
-      position: relative;
-      margin-top: 40vh;
-      padding: 12px 24px;
-      font-size: 16px;
-      background: crimson;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 10;
-    }
-		
-	.kakao-share {
-      position: fixed;
-      bottom: 20px;
-      left: 90%;
-      transform: translateX(-50%);
-      background: #fee500;
-      color: #3c1e1e;
-      border: none;
-      padding: 8px 10px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
-	
-	.calendar-share {
-      position: fixed;
-      bottom: 20px;
-      left: 80%;
-      transform: translateX(-50%);
-      background: gray;
-      color: #3c1e1e;
-      border: none;
-      padding: 8px 10px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
-	
-	.meteor {
-    position: fixed;
-    width: 2px;
-    height: 150px;
-    background: linear-gradient(white, rgba(255,255,255,0.1)); /* 꼬리 → 위쪽 */
-    z-index: 1;
-    opacity: 0.7;
-    transform: rotate(45deg) scale(-1); /* 방향: 오른쪽 위 → 왼쪽 아래 */
-    animation: fall 1.2s linear forwards;
-    pointer-events: none;
-  }
-  
-  @keyframes fall {
-    from {
-      transform: translate(0, 0) rotate(45deg) scale(-1);
-      opacity: 1;
-    }
-    to {
-      transform: translate(-300px, 300px) rotate(45deg) scale(-1); /* 왼쪽 아래로 낙하 */
-      opacity: 0;
-    }
-  }
-  
-#constellation {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  pointer-events: none;
-}
-
-
-	
-  </style>
-  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-</head>
-<body ontouchstart="">
-<canvas id="constellation"></canvas>
-
-  <div class="stars" id="stars"></div>
-
-<a class="calendar-link" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z" target="_blank"></a>
-
-
-  <div class="envelope-wrapper" id="wrapper" role="button" tabindex="0">
-    <div class="envelope"></div>
-    <div class="ribbon"></div>
-    <div class="letter">
-      <h2>이상현 콘서트에 당신을 초대합니다</h2>
-      <p><strong>🗓 오늘 오후 7시</strong><br />
-      📍 서울 은하수 홀 (구름타는길 7번 출구)</p>
-      <p>별빛처럼 반짝이는 밤,<br />
-      상현이의 감미로운 노래와 함께<br />
-      잊지 못할 순간을 선물합니다.<br />
-      <em>정장은 선택, 감동은 필수!</em></p>
-      <button onclick="confirmAttendance()">참석할게요 🎟</button>
-	  
-<button class="calendar-share" onclick="window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z', '_blank')">📆</button>
-
-<button class="kakao-share" onclick="shareKakao()">🔗</button>
-    </div>
-  </div>
-
-  <audio id="bgm" src="https://www.bensound.com/bensound-music/bensound-sweet.mp3" loop autoplay muted></audio>
-
-  <script>
-    document.addEventListener("touchstart", () => {
-      const audio = document.getElementById("bgm");
-      audio.muted = false;
-      audio.play().catch(() => {});
-    }, { once: true });
-
-    const wrapper = document.getElementById("wrapper");
-    const letter = wrapper.querySelector(".letter");
-
-    // 모바일 대응 - pointerdown 사용
-    wrapper.addEventListener("pointerdown", function () {
-      if (!wrapper.classList.contains("opened")) {
-        wrapper.classList.add("opened");
-        setTimeout(() => {
-          letter.classList.add("show");
-        }, 500);
-      }
-    });
-
-    // 별 추가
-    const starContainer = document.getElementById("stars");
-    for (let i = 0; i < 100; i++) {
-      const star = document.createElement("div");
-      star.className = "star";
-      star.style.top = Math.random() * 100 + "%";
-      star.style.left = Math.random() * 100 + "%";
-      star.style.animationDuration = (1.5 + Math.random() * 3) + "s";
-      starContainer.appendChild(star);
-    }
-	// 폭죽효과
-	function confirmAttendance() {
-      for (let i = 0; i < 200; i++) {
-        const confetti = document.createElement("div");
-        confetti.className = "confetti";
-        confetti.style.left = Math.random() * 100 + "vw";
-        confetti.style.top = Math.random() * 100 + "vh";
-
-        const hue = Math.floor(Math.random() * 360);
-        const shape = Math.random() > 0.5 ? '50%' : '0%';
-        confetti.style.backgroundColor = `hsl(${hue}, 100%, 60%)`;
-        confetti.style.borderRadius = shape;
-        const size = Math.random() * 16 + 8;
-        confetti.style.width = size + "px";
-        confetti.style.height = size + "px";
-        confetti.style.boxShadow = `0 0 15px hsla(${hue}, 100%, 70%, 0.9)`;
-        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-
-        document.body.appendChild(confetti);
-        setTimeout(() => confetti.remove(), 2500);
-      }
-    }
-	// 카카오톡공유하기
-	Kakao.init('a77d2e3fab56abe58e2c2da962475674'); // 여기에 본인의 JavaScript 키 입력
-
-    function shareKakao() {
-      Kakao.Link.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: '이상현 콘서트 초대장',
-          description: '오늘 오후 7시, 서울 은하수홀에서 만나요! ✨',
-          imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Milky_Way_Galaxy.jpg',
-          link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href
-          }
-        },
-        buttons: [
-          {
-            title: '초대장 보기',
-            link: {
-              mobileWebUrl: window.location.href,
-              webUrl: window.location.href
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>이상현 콘서트 초대장</title>
+    <style>
+        @keyframes explode {
+            0% {
+                transform: scale(0.3) translateY(0);
+                opacity: 1;
             }
-          }
-        ]
-      });
-    }
-	
-	// 유성떨어지는 로직
-	setInterval(() => {
-    const meteor = document.createElement('div');
-    meteor.className = 'meteor';
-    meteor.style.left = Math.random() * window.innerWidth + 'px';
-    meteor.style.top = Math.random() * window.innerHeight * 0.5 + 'px'; // 위에서 시작
-    document.body.appendChild(meteor);
-    setTimeout(() => meteor.remove(), 6000); // 6초 후 제거
-	}, 500); // 0.5초마다 유성 생성
-	
-	
-	for (let i = 0; i < 100; i++) {
-	  const star = document.createElement('div');
-	  star.className = 'star';
 
-	  // 확률적으로 다른 스타일 적용
-	  const rand = Math.random();
-	  if (rand < 0.2) star.classList.add('large');     // 20%는 밝고 큼
-	  else if (rand < 0.4) star.classList.add('dim');  // 20%는 어둡고 작음
+            30% {
+                transform: scale(1.5) translateY(-60px) rotate(180deg);
+                opacity: 1;
+            }
 
-	  star.style.left = Math.random() * 100 + 'vw';
-	  star.style.top = Math.random() * -100 + 'vh';
-	  star.style.animationDelay = Math.random() * 5 + 's';
-	  document.getElementById('stars').appendChild(star);
-	}
-	
-	// 별 반짝
-	const hues = [0, 45, 60, 180, 220]; // 빨, 노, 따뜻한 흰, 파랑 계열
-	const hue = hues[Math.floor(Math.random() * hues.length)];
-	star.style.backgroundColor = `hsl(${hue}, 100%, 85%)`;
+            100% {
+                transform: scale(0.2) translateY(100px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* 🎉 .confetti: 폭죽 파티클 하나의 스타일을 정의함 */
+        .confetti {
+            position: fixed;
+            /* 항상 화면 기준 위치 고정 (스크롤해도 고정됨). 예: absolute vs fixed vs sticky */
+            border-radius: 50%;
+            /* 원형 모양으로 만들어줌 (50%면 완전한 원) */
+            z-index: 999;
+            /* 가장 위에 보이도록 설정. 값이 클수록 위에 보임 */
+            animation: explode 2.5s ease-out forwards;
+            /* explode 애니메이션을 2.5초간 실행, 부드럽게 사라짐 */
+            pointer-events: none;
+            /* 클릭 등 사용자 상호작용을 막음 */
+            mix-blend-mode: screen;
+            /* 배경과 섞이도록 설정 (빛나는 느낌). 예시: multiply, overlay, lighten */
+        }
+        }
+
+        @keyframes galaxy {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                opacity: 0.2;
+                transform: scale(1) translateY(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.5) translateY(-2px);
+            }
+        }
 
 
+        @keyframes unfold {
+            0% {
+                transform: scaleY(0);
+                opacity: 0;
+            }
 
-  </script>
+            100% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        /* 🌌 전체 배경 설정 (은하 이미지, 스크롤 제거 등) */
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: black;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3f/Milky_Way_Galaxy.jpg');
+            background-size: cover;
+            background-position: center;
+            animation: galaxy 80s linear infinite;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', sans-serif;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        /* ✨ 일반 별: 작고 흰 점 */
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle 3s infinite ease-in-out, star-float 30s linear infinite;
+            filter: drop-shadow(0 0 2px white);
+        }
+
+        /* 🌟 큰 별: 크고 밝음 */
+        .star.large {
+            width: 8px;
+            height: 8px;
+            opacity: 1;
+            animation: sparkle 4s infinite ease-in-out, star-float 40s linear infinite;
+        }
+
+        /* 🔅 어두운 별: 흐릿한 느낌 */
+        .star.dim {
+            width: 1px;
+            height: 1px;
+            opacity: 0.3;
+            animation: sparkle 6s infinite ease-in-out, star-float 50s linear infinite;
+            filter: drop-shadow(0 0 4px white);
+        }
+
+        /* 🌌 별들이 배치될 전체 영역 */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 🔅 어두운 별: 흐릿한 느낌 */
+        .star.dim {
+            animation-duration: 60s;
+        }
+
+        /* ✨ 일반 별: 작고 흰 점 */
+        .star {
+            animation-duration: 40s;
+        }
+
+        /* 🌟 큰 별: 크고 밝음 */
+        .star.large {
+            animation-duration: 20s;
+        }
+
+
+        /* 💌 초대장 봉투 컨테이너 */
+        .envelope-wrapper {
+            position: relative;
+            width: 360px;
+            height: 260px;
+            cursor: pointer;
+            perspective: 1000px;
+            z-index: 2;
+            touch-action: manipulation;
+        }
+
+        /* ✉️ 봉투 배경 */
+        .envelope {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fafafa 0%, #e0e0e0 100%);
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: #dcdcdc;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 3;
+        }
+
+        /* 🎀 리본 장식 */
+        .ribbon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 60px;
+            background: transparent;
+            z-index: 4;
+            transition: all 0.8s ease;
+            pointer-events: none;
+        }
+
+        .ribbon::before,
+        .ribbon::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 60px;
+            background: crimson;
+            border-radius: 50% 50% 0 0;
+            transform: rotate(45deg);
+            transform-origin: bottom right;
+            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.4);
+        }
+
+        .ribbon::after {
+            left: 50px;
+            transform: rotate(-45deg);
+            transform-origin: bottom left;
+        }
+
+        /* 💌 편지 본문 내용 */
+        .letter {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: scaleY(0);
+            width: 315px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            padding: 24px;
+            text-align: center;
+            z-index: 5;
+            transform-origin: top;
+            transition: all 0.8s ease;
+        }
+
+
+        .letter.show {
+            transform: translate(-50%, -50%) scaleY(1);
+            opacity: 1;
+            animation: unfold 0.8s ease forwards;
+        }
+
+
+        .letter h2 {
+            margin-top: 0;
+            font-size: 0.85em;
+            color: #444;
+        }
+
+        .letter p {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.6em;
+        }
+
+        .envelope-wrapper.opened
+
+        /* 🎀 리본 장식 */
+        .ribbon {
+            transform: scaleX(0);
+            opacity: 0;
+        }
+
+        @media (max-width: 400px) {
+
+            /* 💌 초대장 봉투 컨테이너 */
+            .envelope-wrapper {
+                transform: scale(0.85);
+            }
+        }
+
+        /* 📍 메인 버튼 (현재 사용 안함) */
+        .main-button {
+            position: relative;
+            margin-top: 40vh;
+            padding: 12px 24px;
+            font-size: 16px;
+            background: crimson;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* 🔗 카카오톡 공유 버튼 */
+        .kakao-share {
+            position: fixed;
+            bottom: 20px;
+            left: 90%;
+            transform: translateX(-50%);
+            background: #fee500;
+            color: #3c1e1e;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* 📅 일정 공유 버튼 */
+        .calendar-share {
+            position: fixed;
+            bottom: 20px;
+            left: 80%;
+            transform: translateX(-50%);
+            background: gray;
+            color: #3c1e1e;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* 🌠 유성 효과 스타일 */
+        .meteor {
+            position: fixed;
+            width: 2px;
+            height: 150px;
+            background: linear-gradient(white, rgba(255, 255, 255, 0.1));
+            /* 꼬리 → 위쪽 */
+            z-index: 1;
+            opacity: 0.7;
+            transform: rotate(45deg) scale(-1);
+            /* 방향: 오른쪽 위 → 왼쪽 아래 */
+            animation: fall 1.2s linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            from {
+                transform: translate(0, 0) rotate(45deg) scale(-1);
+                opacity: 1;
+            }
+
+            to {
+                transform: translate(-300px, 300px) rotate(45deg) scale(-1);
+                /* 왼쪽 아래로 낙하 */
+                opacity: 0;
+            }
+        }
+
+        /* 🌌 별자리 효과 캔버스 */
+        #constellation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+</head>
+
+<body ontouchstart="">
+    <!-- 🌠 별자리 캔버스 -->
+    <canvas id="constellation"></canvas>
+
+    <h2 id="visit-count" style="position: fixed; top: 20px; left: 20px; color: white; font-size: 14px; z-index: 9999;">
+        방문자 수: <span id="visitorNumber">...</span>명
+    </h2>
+
+    <!-- 🌌 배경 별 애니메이션 컨테이너 -->
+    <div class="stars" id="stars"></div>
+
+    <a class="calendar-link" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z" target="_blank"></a>
+
+
+    <!-- 💌 클릭 시 편지 열림 애니메이션 컨테이너 -->
+    <div class="envelope-wrapper" id="wrapper" role="button" tabindex="0">
+        <div class="envelope"></div>
+        <div class="ribbon"></div>
+        <div class="letter">
+            <h2>이상현 콘서트에 당신을 초대합니다</h2>
+            <p><strong>🗓 오늘 오후 7시</strong><br />
+                📍 서울 은하수 홀 (구름타는길 7번 출구)</p>
+            <p>별빛처럼 반짝이는 밤,<br />
+                상현이의 감미로운 노래와 함께<br />
+                잊지 못할 순간을 선물합니다.<br />
+                <em>정장은 선택, 감동은 필수!</em></p>
+            <button onclick="confirmAttendance()">참석할게요 🎟</button>
+
+            <button class="calendar-share" onclick="window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z', '_blank')">📆</button>
+
+            <button class="kakao-share" onclick="shareKakao()">🔗</button>
+        </div>
+    </div>
+
+    <!-- 🔊 배경 음악 (모바일 터치로 해제됨) -->
+    <audio id="bgm" src="https://www.bensound.com/bensound-music/bensound-sweet.mp3" loop autoplay muted></audio>
+
+    <script>
+        document.addEventListener("touchstart", () => {
+            const audio = document.getElementById("bgm");
+            audio.muted = false;
+            audio.play().catch(() => {});
+        }, {
+            once: true
+        });
+
+        const wrapper = document.getElementById("wrapper");
+        const letter = wrapper.querySelector(".letter");
+
+        // 모바일 대응 - pointerdown 사용
+        wrapper.addEventListener("pointerdown", function() {
+            if (!wrapper.classList.contains("opened")) {
+                wrapper.classList.add("opened");
+                setTimeout(() => {
+                    letter.classList.add("show");
+                }, 500);
+            }
+        });
+
+        // 별 추가
+        const starContainer = document.getElementById("stars");
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.top = Math.random() * 100 + "%";
+            star.style.left = Math.random() * 100 + "%";
+            star.style.animationDuration = (1.5 + Math.random() * 3) + "s";
+            starContainer.appendChild(star);
+        }
+        // 폭죽효과
+        // 🎉 참석 버튼 클릭 시 폭죽 효과 나타남
+        function confirmAttendance() {
+            for (let i = 0; i < 200; i++) {
+                const confetti = document.createElement("div");
+                confetti.className = "confetti";
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.top = Math.random() * 100 + "vh";
+
+                const hue = Math.floor(Math.random() * 360);
+                const shape = Math.random() > 0.5 ? '50%' : '0%';
+                confetti.style.backgroundColor = `hsl(${hue}, 100%, 60%)`;
+                confetti.style.borderRadius = shape;
+                const size = Math.random() * 16 + 8;
+                confetti.style.width = size + "px";
+                confetti.style.height = size + "px";
+                confetti.style.boxShadow = `0 0 15px hsla(${hue}, 100%, 70%, 0.9)`;
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 2500);
+            }
+        }
+        // 카카오톡공유하기
+        Kakao.init('a77d2e3fab56abe58e2c2da962475674'); // 여기에 본인의 JavaScript 키 입력
+
+        // 📲 카카오톡 공유 버튼 클릭 시 링크 공유
+        function shareKakao() {
+            Kakao.Link.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: '이상현 콘서트 초대장',
+                    description: '오늘 오후 7시, 서울 은하수홀에서 만나요! ✨',
+                    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Milky_Way_Galaxy.jpg',
+                    link: {
+                        mobileWebUrl: window.location.href,
+                        webUrl: window.location.href
+                    }
+                },
+                buttons: [{
+                    title: '초대장 보기',
+                    link: {
+                        mobileWebUrl: window.location.href,
+                        webUrl: window.location.href
+                    }
+                }]
+            });
+        }
+
+        // 🌠 유성 떨어지는 애니메이션 (0.5초마다 생성)
+        setInterval(() => {
+            const meteor = document.createElement('div');
+            meteor.className = 'meteor';
+            meteor.style.left = Math.random() * window.innerWidth + 'px';
+            meteor.style.top = Math.random() * window.innerHeight * 0.5 + 'px'; // 위에서 시작
+            document.body.appendChild(meteor);
+            setTimeout(() => meteor.remove(), 6000); // 6초 후 제거
+        }, 500); // 0.5초마다 유성 생성
+
+
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+
+            // 확률적으로 다른 스타일 적용
+            const rand = Math.random();
+            if (rand < 0.2) star.classList.add('large'); // 20%는 밝고 큼
+            else if (rand < 0.4) star.classList.add('dim'); // 20%는 어둡고 작음
+
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * -100 + 'vh';
+            star.style.animationDelay = Math.random() * 5 + 's';
+            document.getElementById('stars').appendChild(star);
+        }
+
+        // 별 반짝
+        const hues = [0, 45, 60, 180, 220]; // 빨, 노, 따뜻한 흰, 파랑 계열
+        const hue = hues[Math.floor(Math.random() * hues.length)];
+        star.style.backgroundColor = `hsl(${hue}, 100%, 85%)`;
+    </script>
+
+	// DB 연동
+	<script type="module">
+		const SUPABASE_URL = "https://lyinkambjpffoclelhqk.supabase.co"; // 🔁 여기에 본인 URL(Project URL)
+		const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5aW5rYW1ianBmZm9jbGVsaHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MzgwNDcsImV4cCI6MjA2MDUxNDA0N30.9bnEGXs_Jcay_giD4wZYDHRLIiRUw-nnL0aWyfQnXNM"; // 🔁 여기에 본인 키
+
+		import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+		const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+		async function updateVisitorCount() {
+		const { data, error } = await supabase.from("visits").select("*").limit(1);
+		if (error || !data || data.length === 0) {
+		document.getElementById("visitorNumber").innerText = "에러";
+		return;
+		}
+
+		const visit = data[0];
+		const newCount = visit.count + 1;
+
+		await supabase.from("visits").update({ count: newCount }).eq("id", visit.id);
+
+		document.getElementById("visitorNumber").innerText = newCount.toLocaleString();
+		}
+
+		updateVisitorCount();
+	</script>
 </body>
+
 </html>

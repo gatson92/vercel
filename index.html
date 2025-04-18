@@ -6,39 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>이상현 콘서트 초대장</title>
     <style>
-        @keyframes explode {
-            0% {
-                transform: scale(0.3) translateY(0);
-                opacity: 1;
-            }
-
-            30% {
-                transform: scale(1.5) translateY(-60px) rotate(180deg);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(0.2) translateY(100px) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        /* 🎉 .confetti: 폭죽 파티클 하나의 스타일을 정의함 */
-        .confetti {
-            position: fixed;
-            /* 항상 화면 기준 위치 고정 (스크롤해도 고정됨). 예: absolute vs fixed vs sticky */
-            border-radius: 50%;
-            /* 원형 모양으로 만들어줌 (50%면 완전한 원) */
-            z-index: 999;
-            /* 가장 위에 보이도록 설정. 값이 클수록 위에 보임 */
-            animation: explode 2.5s ease-out forwards;
-            /* explode 애니메이션을 2.5초간 실행, 부드럽게 사라짐 */
-            pointer-events: none;
-            /* 클릭 등 사용자 상호작용을 막음 */
-            mix-blend-mode: screen;
-            /* 배경과 섞이도록 설정 (빛나는 느낌). 예시: multiply, overlay, lighten */
-        }
-        }
 
         @keyframes galaxy {
             0% {
@@ -82,22 +49,27 @@
         }
 
         /* 🌌 전체 배경 설정 (은하 이미지, 스크롤 제거 등) */
-        body {
-            margin: 0;
-            height: 100vh;
-            background-color: black;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3f/Milky_Way_Galaxy.jpg');
-            background-size: cover;
-            background-position: center;
-            animation: galaxy 80s linear infinite;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', sans-serif;
-            position: relative;
-            touch-action: manipulation;
-        }
+		body {
+			margin: 0;                        /* 기본 여백 제거. 다른 옵션: 8px, auto 등 */
+			min-height: 100vh;                /* 뷰포트 높이의 최소 높이 지정. 다른 옵션: height: 100vh; min-height: 100% */
+			background-color: black;        /* 배경색 설정. 다른 옵션: #000, rgb(0,0,0), transparent 등 */
+			background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3f/Milky_Way_Galaxy.jpg');
+											  /* 배경 이미지 지정. 다른 옵션: linear-gradient(), url(...) , 여러 이미지 쉼표 구분 */
+			background-size: cover;           /* 이미지 크기 조절: cover(비율 유지 채우기), contain(전부 보이게), auto, 100% 100% */
+			background-position: center;      /* 이미지 위치: center, top, bottom, left, right, 20% 50% 등 */
+			animation: galaxy 80s linear infinite;
+											  /* 애니메이션: 이름 지속시간 타이밍함수 반복횟수
+												 다른 옵션: ease, ease-in-out, 2s, alternate, 3 etc */
+			overflow: hidden;                 /* 넘치는 컨텐츠 숨김. 다른 옵션: visible, scroll, auto */
+			display: flex;                    /* Flexbox 레이아웃 사용. 다른 옵션: block, grid, inline-flex */
+			justify-content: center;          /* 주 축 가로 중앙 정렬. 다른 옵션: flex-start, flex-end, space-between */
+			align-items: center;              /* 교차 축 세로 중앙 정렬. 다른 옵션: flex-start, flex-end, stretch */
+			font-family: 'Segoe UI', sans-serif;
+											  /* 폰트 패밀리 설정. 다른 옵션: 'Arial', sans-serif, 'Helvetica Neue' */
+			position: relative;               /* 자식 절대위치 요소 기준. 다른 옵션: absolute, fixed, sticky */
+			touch-action: manipulation;       /* 터치 동작 제어: manipulation(기본 제스처), pan-x, pan-y, none */
+		}
+
 
         /* ✨ 일반 별: 작고 흰 점 */
         .star {
@@ -151,17 +123,53 @@
             animation-duration: 20s;
         }
 
+        .envelope-center {
+            display: flex;                  /* 🔄 Flexbox 중앙 정렬 시작 */
+            justify-content: center;       /* 가로 중앙 */
+            align-items: center;           /* 세로 중앙 */
+            position: fixed;               /* 뷰포트 기준 위치 */
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;          /* 내부 클릭 요소 외에는 이벤트 막기 */
+            z-index: 10;                   /* 다른 요소 위에 배치 */
+        }
+
 
         /* 💌 초대장 봉투 컨테이너 */
         .envelope-wrapper {
-            position: relative;
-            width: 360px;
-            height: 260px;
-            cursor: pointer;
-            perspective: 1000px;
-            z-index: 2;
-            touch-action: manipulation;
+            position: relative;  
+            /* 자식 요소(.ribbon, .letter 등)의 절대 위치 기준이 됨 
+            다른 옵션: absolute (부모 기준 절대 위치), fixed (뷰포트 기준 절대 위치), sticky */
+
+            width: min(90vw, 360px);  
+            /* 뷰포트 너비의 90% 또는 최대 360px 중 작은 값 적용 
+            다른 옵션: max(90vw, 360px), 100%, 360px, auto */
+
+            height: 260px;  
+            /* 고정 높이 지정 
+            다른 옵션: auto (내용에 맞게), 50vh (뷰포트 높이의 50%), min(50vh, 260px) */
+
+            cursor: pointer;  
+            /* 마우스 커서를 손가락 포인트 모양으로 변경 (클릭 가능 표시) 
+            다른 옵션: default, text, move, wait */
+
+            perspective: 1000px;  
+            /* 3D 변형 시 깊이(원근감) 설정 
+            다른 옵션: none (3D 효과 없음), 500px (더 강한 원근감), 1500px (덜한 원근감) */
+
+            z-index: 11;  
+            /* 같은 위치 요소 간 쌓임 순서 지정(값 클수록 위) 
+            다른 옵션: auto (문서 순서), 0, 999, etc */
+
+            touch-action: manipulation;  
+            /* 터치 제스처 처리 방법 지정 (빠른 반응) 
+            다른 옵션: none (터치 막기), pan-x (가로 스크롤만), pan-y (세로 스크롤만) */
+
+            pointer-events: auto;          /* 부모가 막은 이벤트 다시 활성화 */
         }
+
 
         /* ✉️ 봉투 배경 */
         .envelope {
@@ -194,15 +202,35 @@
         /* 🎀 리본 장식 */
         .ribbon {
             position: absolute;
+            /* 부모 요소(.envelope-wrapper)를 기준으로 절대 위치 지정 
+            다른 옵션: relative (문서 흐름에 따라 위치), fixed (뷰포트 기준), sticky */
+
             top: 50%;
             left: 50%;
+            /* 부모 요소의 중앙 좌표로 위치 지정 */
+
             transform: translate(-50%, -50%);
+            /* 요소 자체 크기의 50%만큼 왼쪽·위로 이동 → 정확한 중앙 배치 
+            다른 옵션: translateX(), translateY(), scale(), rotate() 등 */
+
             width: 100px;
             height: 60px;
+            /* 리본 이미지나 모양을 표현하기 위한 크기 설정 
+            다른 옵션: %, em, rem 등 상대 단위 사용 가능 */
+
             background: transparent;
+            /* 배경 투명 (보이지 않음), 다른 옵션: red, rgba(255,0,0,0.5), linear-gradient 등 */
+
             z-index: 4;
+            /* 쌓임 순서 설정 (값이 클수록 위에 표시됨) */
+
             transition: all 0.8s ease;
+            /* 모든 속성 변화에 부드러운 전환 효과 적용 (0.8초 동안 천천히 변화) 
+            다른 옵션: transition-property: transform, background 등 */
+
             pointer-events: none;
+            /* 마우스/터치 이벤트 무시 (클릭 불가능하게 함) 
+            다른 옵션: auto (기본값), visiblePainted, bounding-box 등 */
         }
 
         .ribbon::before,
@@ -270,27 +298,23 @@
             opacity: 0;
         }
 
-        @media (max-width: 400px) {
-
-            /* 💌 초대장 봉투 컨테이너 */
+        @media (max-width: 400px) {            
             .envelope-wrapper {
                 transform: scale(0.85);
             }
         }
 
-        /* 📍 메인 버튼 (현재 사용 안함) */
-        .main-button {
-            position: relative;
-            margin-top: 40vh;
-            padding: 12px 24px;
-            font-size: 16px;
-            background: crimson;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 10;
-        }
+        /* 💌 초대장 봉투 컨테이너 */
+        @media (max-width: 400px) {
+        /* 화면 너비가 400px 이하일 때만 아래 스타일 적용됨 
+           주로 모바일 소형 기기(iPhone SE 등)를 위한 반응형 처리 */
+
+        .envelope-wrapper {
+            transform: scale(0.85);
+            /* 요소 전체를 85% 크기로 축소하여 화면에 더 잘 맞도록 조절 
+               다른 옵션: scale(1) = 원래 크기, scale(0.5) = 50% 축소, scaleX(0.9), scaleY(1.2) 등 */
+            }
+        }        
 
         /* 🔗 카카오톡 공유 버튼 */
         .kakao-share {
@@ -356,24 +380,61 @@
             }
         }
 
-        /* 🌌 별자리 효과 캔버스 */
-        #constellation {
+        /* 🎉 .confetti: 폭죽 파티클 하나의 스타일을 정의함 */
+        .confetti {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
+            /* 항상 화면 기준 위치 고정 (스크롤해도 고정됨). 예: absolute vs fixed vs sticky */
+            border-radius: 50%;
+            /* 원형 모양으로 만들어줌 (50%면 완전한 원) */
+            z-index: 999;
+            /* 가장 위에 보이도록 설정. 값이 클수록 위에 보임 */
+            animation: explode 2.5s ease-out forwards;
+            /* explode 애니메이션을 2.5초간 실행, 부드럽게 사라짐 */
             pointer-events: none;
+            /* 클릭 등 사용자 상호작용을 막음 */
+            mix-blend-mode: screen;
+            /* 배경과 섞이도록 설정 (빛나는 느낌). 예시: multiply, overlay, lighten */
         }
+
+        @keyframes explode {
+            /* 🎆 폭죽(색종이) 하나의 애니메이션 정의 
+            실행 시점부터 끝날 때까지의 스타일 변화 순서를 지정함 */
+
+            0% {
+                transform: scale(0.3) translateY(0);
+                /* 초기 크기를 30%로 설정하고, 위로 이동하지 않음 
+                scale: 크기 조절 (1 = 원래 크기, 0.3 = 30%)
+                translateY(0): 세로 이동 없음 */
+
+                opacity: 1;
+                /* 완전히 보이는 상태 */
+            }
+
+            30% {
+                transform: scale(1.5) translateY(-60px) rotate(180deg);
+                /* 크기를 150%로 확대, 위로 60px 올라가며 180도 회전 
+                rotate: 시계 방향 회전, deg 단위 사용 */
+
+                opacity: 1;
+                /* 여전히 보이는 상태 유지 */
+            }
+
+            100% {
+                transform: scale(0.2) translateY(100px) rotate(720deg);
+                /* 작아진 채로 아래로 100px 떨어지며 총 720도 회전 (2바퀴) */
+
+                opacity: 0;
+                /* 완전히 사라짐 (투명도 0%) */
+            }
+        }
+
     </style>
     <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 </head>
 
 <body ontouchstart="">
-    <!-- 🌠 별자리 캔버스 -->
-    <canvas id="constellation"></canvas>
 
+    <!-- 💌 방문자 수 및 참석자 수 표시 -->    
     <h2 id="visit-count" style="position: fixed; top: 20px; left: 20px; color: white; font-size: 14px; z-index: 9999;">
 	  방문자 수 : <span id="visitorNumber">...</span>명
 	  <br/>
@@ -383,29 +444,25 @@
     <!-- 🌌 배경 별 애니메이션 컨테이너 -->
     <div class="stars" id="stars"></div>
 
-    <a class="calendar-link" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z" target="_blank"></a>
-
-
     <!-- 💌 클릭 시 편지 열림 애니메이션 컨테이너 -->
-    <div class="envelope-wrapper" id="wrapper" role="button" tabindex="0">
-        <div class="envelope"></div>
-        <div class="ribbon"></div>
-        <div class="letter">
-            <h2>이상현 콘서트에 당신을 초대합니다</h2>
-            <p><strong>🗓 오늘 오후 7시</strong><br />
-                📍 서울 은하수 홀 (구름타는길 7번 출구)</p>
-            <p>별빛처럼 반짝이는 밤,<br />
-                상현이의 감미로운 노래와 함께<br />
-                잊지 못할 순간을 선물합니다.<br />
-                <em>정장은 선택, 감동은 필수!</em></p>
-            <button onclick="confirmAttendance()">참석할게요 🎟</button>
-
-            <button class="calendar-share" onclick="window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z', '_blank')">📆</button>
-
-            <button class="kakao-share" onclick="shareKakao()">🔗</button>
+    <div class="envelope-center">
+        <div class="envelope-wrapper" id="wrapper" role="button" tabindex="0">
+            <div class="envelope"></div>
+            <div class="ribbon"></div>
+            <div class="letter">
+                <h2>이상현 콘서트에 당신을 초대합니다</h2>
+                <p><strong>🗓 오늘 오후 7시</strong><br />
+                    📍 서울 은하수 홀 (구름타는길 7번 출구)</p>
+                <p>별빛처럼 반짝이는 밤,<br />
+                    상현이의 감미로운 노래와 함께<br />
+                    잊지 못할 순간을 선물합니다.<br />
+                    <em>정장은 선택, 감동은 필수!</em></p>
+                <button onclick="confirmAttendance()">참석할게요 🎟</button>
+                <button class="calendar-share" onclick="window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text=이상현+콘서트&details=오늘+오후+7시,+서울+은하수홀에서+열리는+감동적인+콘서트에+초대합니다!&location=서울+은하수홀&dates=20250416T100000Z/20250416T120000Z', '_blank')">📆</button>
+                <button class="kakao-share" onclick="shareKakao()">🔗</button>
+            </div>
         </div>
     </div>
-
     <!-- 🔊 배경 음악 (모바일 터치로 해제됨) -->
     <audio id="bgm" src="https://www.bensound.com/bensound-music/bensound-sweet.mp3" loop autoplay muted></audio>
 
@@ -441,7 +498,6 @@
             star.style.animationDuration = (1.5 + Math.random() * 3) + "s";
             starContainer.appendChild(star);
         }
-
         
         // 카카오톡공유하기
         Kakao.init('a77d2e3fab56abe58e2c2da962475674'); // 여기에 본인의 JavaScript 키 입력

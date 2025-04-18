@@ -547,8 +547,11 @@
 
 		  // 버튼에 연결될 함수
 		  window.confirmAttendance = async function () {
-			// 🎉 참석 버튼 클릭 시 폭죽 효과 나타남 🎆
-			
+
+			// 📦 참석 기록
+			await logAttendance();			  
+			  
+			// 🎉 참석 버튼 클릭 시 폭죽 효과 나타남 🎆			
 			const isMobile = /iPhone|Android/i.test(navigator.userAgent);
 			// 💥 폭죽 개수 조절
 			const confettiCount = isMobile ? 50 : 200;
@@ -576,9 +579,6 @@
 			// ⏱️ 조금 더 여유 있게 제거 (4초)
 			setTimeout(() => confetti.remove(), 4000);
 			}
-
-			// 📦 참석 기록
-			await logAttendance();
 		  };
 
 		  // 초기 실행

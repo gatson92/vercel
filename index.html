@@ -209,7 +209,7 @@
             left: 50%;
             /* 부모 요소의 중앙 좌표로 위치 지정 */
 
-            transform: translate(-50%, -50%);
+            transform: translate(-45%, -45%);
             /* 요소 자체 크기의 50%만큼 왼쪽·위로 이동 → 정확한 중앙 배치 
             다른 옵션: translateX(), translateY(), scale(), rotate() 등 */
 
@@ -231,25 +231,71 @@
             pointer-events: none;
             /* 마우스/터치 이벤트 무시 (클릭 불가능하게 함) 
             다른 옵션: auto (기본값), visiblePainted, bounding-box 등 */
+
+            /* box-shadow: inset 0 0 8px rgba(255,255,255,0.4); 매듭에만 입체감 */
         }
 
         .ribbon::before,
         .ribbon::after {
             content: '';
+            /* 가상 요소로 리본 꼬리를 생성함 (HTML에 없는 요소를 렌더링)
+            다른 옵션: content: "🎀"; → 실제 텍스트/이모지 출력 가능
+            content가 없으면 가상 요소는 화면에 표시되지 않음 */
+
             position: absolute;
+            /* 부모 요소(.ribbon)를 기준으로 절대 위치 지정
+            다른 옵션: relative, fixed, sticky
+            relative → 자신 위치 기준 오프셋
+            fixed → 뷰포트 기준, 스크롤에도 고정 */
+
             width: 50px;
-            height: 60px;
+            height: 80px;
+            /* 리본 꼬리의 크기를 지정함
+            width와 height를 조절하면 날개 길이·두께가 달라짐
+            예: width: 80px → 더 넓은 꼬리, height: 40px → 짧은 꼬리 */
+
             background: crimson;
+            /* 리본 꼬리의 배경색
+            다른 옵션: linear-gradient(to bottom, #f00, #900)
+            → 입체감 있는 리본 효과 연출 가능 */
+
             border-radius: 50% 50% 0 0;
-            transform: rotate(45deg);
+            /* 상단을 둥글게 만들고 하단은 직각으로 유지함
+            4개 순서: top-left, top-right, bottom-right, bottom-left
+            다른 옵션: border-radius: 0 → 각진 리본
+            border-radius: 50% → 완전한 원형 */
+
+            transform: rotate(50deg);
+            /* 요소를 시계 방향으로 45도 회전시켜 리본처럼 비틀림
+            다른 옵션: rotate(0deg) → 직각 / rotate(90deg) → 수직
+            효과: 리본의 꼬리를 양쪽 사선 형태로 배치 가능 */
+
             transform-origin: bottom right;
-            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.4);
+            /* 회전 중심점을 우측 하단으로 지정
+            다른 옵션: center, top left, 25% 75%
+            → 중심 위치 변경 시 회전 방향이 달라짐 */
+
+            /* box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.9); */
+            /* 내부 빛나는 느낌으로 리본 광택 효과 생성
+            inset → 내부 그림자
+            다른 옵션: box-shadow: 4px 4px 10px rgba(0,0,0,0.3);
+            → 바깥쪽 입체 그림자 생성 */
+
+            /* background: linear-gradient(145deg, #c00, #800); */
         }
 
         .ribbon::after {
             left: 50px;
-            transform: rotate(-45deg);
+            /* 오른쪽 리본 꼬리를 왼쪽으로 50px 이동시킴
+            다른 옵션: left: 30px → 꼬리 붙음 / left: 70px → 더 멀리 벌어짐 */
+
+            transform: rotate(-50deg);
+            /* 반대 방향으로 회전하여 좌우 대칭 느낌
+            rotate(45deg)와 반대로 회전시켜 마치 리본이 묶여있는 듯한 대칭 구조 연출 */
+
             transform-origin: bottom left;
+            /* 왼쪽 하단을 기준으로 회전함
+            → 오른쪽 꼬리와 반대 방향으로 회전하도록 보정됨 */
         }
 
         /* 💌 편지 본문 내용 */
